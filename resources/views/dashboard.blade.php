@@ -71,7 +71,7 @@
             <!-- <a href="{{ url('admin/deactive_users') }}"> -->
             <div class="quick-stats__item">
                 <div class="quick-stats__info col-md-8">
-                    <h2></h2>
+                    <h2>{{ $details['deactivate_users'] }}</h2>
                     <small>Deactivate Users</small> 
                 </div>
                 <div class="col-md-4 text-right">

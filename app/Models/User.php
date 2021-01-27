@@ -35,7 +35,7 @@ class User extends Model
     {
         $totalusers = User::count();
         $todayusers = User::whereDate('created_at',Carbon::today())->count();
-        // $deactivate_users = User::where('status',2)->count();
+        $deactivate_users = User::where('status',2)->count();
         // $kyc_req = Kyc::on('mysql2')->where('status',2)->count();
 
         $btc_deposit = UserBtcTransaction::totalTransactions('received');
@@ -57,18 +57,19 @@ class User extends Model
 
         $today_transactions = $today_btc_transaction+$today_eth_transaction;
         $email_unverified_users = User::where('email_verify',0)->count();
+        $deactivated_users = User::where('status',2)->count();
 
         $details = array(
-            'totalusers' => $totalusers,
-            'todayusers' => $todayusers,
-            // 'deactivate_users' => $deactivate_users,
-            // 'kyc_req' => $kyc_req,
-            'total_deposit' => $total_deposit,
-            'total_withdraw' => $total_withdraw,
-            'total_transactions' => $total_transactions,
-            'today_transactions' => $today_transactions,
-            'email_unverified_users' => $email_unverified_users,
-            );
+                            'totalusers' => $totalusers,
+                            'todayusers' => $todayusers,
+                            'deactivate_users' => $deactivate_users,
+                            // 'kyc_req' => $kyc_req,
+                            'total_deposit' => $total_deposit,
+                            'total_withdraw' => $total_withdraw,
+                            'total_transactions' => $total_transactions,
+                            'today_transactions' => $today_transactions,
+                            'email_unverified_users' => $email_unverified_users,
+                        );
         return $details;
     }
 
@@ -245,96 +246,84 @@ class User extends Model
          
         return $data;
     }
-
-
-    public static function ETHDeopistAmount($uid){
-
-        $balance=UserEthTransaction::on('mysql2')->where('user_id',$uid)->where('type','received')->where('status',2)->sum('amount');
-        return $balance;
-    }
-
-    public static function BTCDeopistAmount($uid){
-
-          $balance=UserBtcTransaction::on('mysql2')->where('user_id',$uid)->where('type','received')->where('status',2)->sum('amount');
-        return $balance;
-
-    }
     public static function JADAXDeopistAmount($uid){
-          $balance=UserJadaxTransaction::on('mysql2')->where('user_id',$uid)->where('type','received')->where('status',2)->sum('amount');
+        $balance=UserJadaxTransaction::on('mysql2')->where('user_id',$uid)->where('type','received')->where('status',2)->sum('amount');
         return $balance;
-
     }
-
-    public static function commission_wallet(){
-
-    $commission = Commission::on('mysql2')->get();
+    public static function commission_wallet()
+    {
+        $commission = Commission::on('mysql2')->get();
         foreach ($commission as $key => $value) {
             $wallet[$key] =$value->source;
         }
         return $wallet;
     }
-    
+    public static function ETHDeopistAmount($uid)
+    {
+        $balance=UserEthTransaction::on('mysql2')->where('user_id',$uid)
+                                        ->where('type','received')
+                                        ->where('status',2)
+                                        ->sum('amount');
+        return $balance;
+    }
+    public static function BTCDeopistAmount($uid)
+    {
+        $balance=UserBtcTransaction::on('mysql2')->where('user_id',$uid)
+                                        ->where('type','received')
+                                        ->where('status',2)
+                                        ->sum('amount');
+        return $balance;
+    }
     public static function getIndividualUser($uid)
     {
         $instance = new User();
-
-      $user = User::where('id', $uid)->with('userBtcDetails','userEthDetails')->first();  
-
-      $commission = Commission::on('mysql2')->get();
-
-      $users['commission'] =$instance->commission_wallet();
-
-
-      $users['id'] =$user->id;
-      $users['first_nmae']=$user->fname;
-      $users['last_nmae']=$user->lname;
-      $users['email']=$user->email;
-      $users['mobile_number']=$user->phone;
-      $users['dob']='';
-
-      $profile = UserProfile::on('mysql2')->where('id', $uid)->first();  
-
-      if($profile){
-        $users['profile_img'] = $profile->profile_avatar;  
-      }else{
-        $users['profile_img']='';
-      }
-
+        $user = User::where('id', $uid)->with('userBtcDetails','userEthDetails')->first();
+        // printf(json_encode($user));exit;
+        $commission = Commission::on('mysql2')->get();
+        $users['commission'] =$instance->commission_wallet();
+        $users['id'] =$user->id;
+        $users['first_nmae']=$user->fname;
+        $users['last_nmae']=$user->lname;
+        $users['email']=$user->email;
+        $users['mobile_number']=$user->phone;
+        $users['dob']='';
+        if($user->image != null){
+            $users['image'] = $user->image;  
+        }else{
+            $users['image']='';
+        }
       
+        $users['BTC_address']   = $user->userBtcDetails->address;
+        $users['ETH_address']   = $user->userEthDetails->address;
+        // $users['JADAX_address'] = $user->userEthDetails->address;
+        $users['BTC_deposit_balance']=$instance->BTCDeopistAmount($uid);
+        $users['ETH_deposit_balance']=$instance->ETHDeopistAmount($uid);
+        // $users['JADAX_deposit_balance']=$instance->JADAXDeopistAmount($uid);
+
+        $users['BTC_trade_balance']=$instance->BTCDeopistAmount($uid);
+        $users['ETH_trade_balance']=$instance->ETHDeopistAmount($uid);
+        // $users['JADAX_trade_balance']=$instance->JADAXDeopistAmount($uid);
+
+        $users['BTC_escrow_balance']=$instance->BTCDeopistAmount($uid);
+        $users['ETH_escrow_balance']=$instance->ETHDeopistAmount($uid);
+        // $users['JADAX_escrow_balance']=$instance->JADAXDeopistAmount($uid);
+
+        $users['BTC_total_balance']=$instance->BTCDeopistAmount($uid);
+        $users['ETH_total_balance']=$instance->ETHDeopistAmount($uid);
+        // $users['JADAX_total_balance']=$instance->JADAXDeopistAmount($uid);
+
+        $users['BTC_deposit_history']=$instance->getUserBtcDeposithistory($uid);
+        $users['ETH_deposit_history']=$instance->getUserETHDeposithistory($uid);
+        // $users['JADAX_deposit_history']=$instance->getUserJadaxDeposithistory($uid);
+
+        $users['BTC_withdraw_history']=$instance->getUserBtcWithdrawhistory($uid);
+        $users['ETH_withdraw_history']=$instance->getUserETHWithdrawhistory($uid);
+        // $users['JADAX_withdraw_history']=$instance->getUserJadaxWithdrawhistory($uid);
       
-      $users['BTC_address']   = $user->userBtcDetails->address;
-      $users['ETH_address']   = $user->userEthDetails->address;
-      $users['JADAX_address'] = $user->userEthDetails->address;
-
-      $users['BTC_deposit_balance']=$instance->BTCDeopistAmount($uid);
-      $users['ETH_deposit_balance']=$instance->ETHDeopistAmount($uid);
-      $users['JADAX_deposit_balance']=$instance->JADAXDeopistAmount($uid);
-
-      $users['BTC_trade_balance']=$instance->BTCDeopistAmount($uid);
-      $users['ETH_trade_balance']=$instance->ETHDeopistAmount($uid);
-      $users['JADAX_trade_balance']=$instance->JADAXDeopistAmount($uid);
-
-      $users['BTC_escrow_balance']=$instance->BTCDeopistAmount($uid);
-      $users['ETH_escrow_balance']=$instance->ETHDeopistAmount($uid);
-      $users['JADAX_escrow_balance']=$instance->JADAXDeopistAmount($uid);
-
-      $users['BTC_total_balance']=$instance->BTCDeopistAmount($uid);
-      $users['ETH_total_balance']=$instance->ETHDeopistAmount($uid);
-      $users['JADAX_total_balance']=$instance->JADAXDeopistAmount($uid);
-
-      $users['BTC_deposit_history']=$instance->getUserBtcDeposithistory($uid);
-      $users['ETH_deposit_history']=$instance->getUserETHDeposithistory($uid);
-      $users['JADAX_deposit_history']=$instance->getUserJadaxDeposithistory($uid);
-
-      $users['BTC_withdraw_history']=$instance->getUserBtcWithdrawhistory($uid);
-      $users['ETH_withdraw_history']=$instance->getUserETHWithdrawhistory($uid);
-      $users['JADAX_withdraw_history']=$instance->getUserJadaxWithdrawhistory($uid);
-      
-      $users['buy_trade']=$instance->getUserBuyTrade($uid);
-      $users['sell_trade']=$instance->getUserSellTrade($uid);
+        $users['buy_trade']=$instance->getUserBuyTrade($uid);
+        $users['sell_trade']=$instance->getUserSellTrade($uid);
 
         return $users;
-
     }
 
     public static function getUserBuyTrade($uid)

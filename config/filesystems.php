@@ -63,6 +63,14 @@ return [
             'bucket' => env('AWS_BUCKET'),
         ],
 
+        // 'ftp' => [
+        //     'driver' => 'ftp',
+        //     'host' => env('FTP_HOST'),
+        //     'username' => env('FTP_USERNAME'),
+        //     'password' => env('FTP_PASSWORD'),
+        //     'root' => '/consummo.com/exchange.consummo.com/' // for example: /var/www/html/dev/images
+        // ],
+
     ],
 
 ];

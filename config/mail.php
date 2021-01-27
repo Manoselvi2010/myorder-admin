@@ -16,7 +16,9 @@ return [
     |
     */
 
-    'driver' => env('MAIL_DRIVER', 'mail'),
+    'driver' => env('MAIL_DRIVER', 'smtp'),
+    // 'driver' => env('MAIL_DRIVER', 'mail'),
+    
 
     /*
     |--------------------------------------------------------------------------
@@ -30,7 +32,6 @@ return [
     */
 
     'host' => env('MAIL_HOST', 'smtp.sendgrid.net'),
-    // 'host' => env('MAIL_HOST', 'smtp.gmail.com'),
 
     /*
     |--------------------------------------------------------------------------
@@ -57,8 +58,8 @@ return [
     */
 
     'from' => [
-        'address' => env('MAIL_FROM_ADDRESS', 'support@Blastexchange.com'),
-        'name' => env('MAIL_FROM_NAME', 'Blastexchange'),
+        'address' => env('MAIL_FROM_ADDRESS', 'support@exchange.com'),
+        'name' => env('MAIL_FROM_NAME', 'exchange'),
     ],
 
     /*
@@ -86,9 +87,9 @@ return [
     */
 
 
-    'username' => env('MAIL_USERNAME','Boostedpro'),
+    'username' => env('MAIL_USERNAME',''),
 
-    'password' => env('MAIL_PASSWORD','69CHEVELLE!'),
+    'password' => env('MAIL_PASSWORD',''),
 
     /*
     |--------------------------------------------------------------------------
@@ -120,6 +121,14 @@ return [
 
         'paths' => [
             resource_path('views/vendor/mail'),
+        ],
+    ],
+
+    'stream' => [
+        'ssl' => [
+            'verify_peer' => false,
+            'verify_peer_name' => false,
+            'allow_self_signed' => true,
         ],
     ],
 

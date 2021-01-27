@@ -50,7 +50,16 @@ return [
             'charset' => 'utf8mb4',
             'collation' => 'utf8mb4_unicode_ci',
             'prefix' => '',
-            'strict' => true,
+            'strict' => false,
+            'modes' => [
+                            //'ONLY_FULL_GROUP_BY', // Disable this to allow grouping by one column
+                            'STRICT_TRANS_TABLES',
+                            'NO_ZERO_IN_DATE',
+                            'NO_ZERO_DATE',
+                            'ERROR_FOR_DIVISION_BY_ZERO',
+                            'NO_AUTO_CREATE_USER',
+                            'NO_ENGINE_SUBSTITUTION'
+                        ],
             'engine' => null,
             'init_commands' => array('sql_mode' => "SET sql_mode = 'REAL_AS_FLOAT,PIPES_AS_CONCAT,ANSI_QUOTES,IGNORE_SPACE,STRICT_TRANS_TABLES,STRICT_ALL_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO'")
         ],
@@ -66,7 +75,16 @@ return [
             'charset' => 'utf8mb4',
             'collation' => 'utf8mb4_unicode_ci',
             'prefix' => '',
-            'strict' => true,
+            'strict' => false,
+            'modes' => [
+                            //'ONLY_FULL_GROUP_BY', // Disable this to allow grouping by one column
+                            'STRICT_TRANS_TABLES',
+                            'NO_ZERO_IN_DATE',
+                            'NO_ZERO_DATE',
+                            'ERROR_FOR_DIVISION_BY_ZERO',
+                            'NO_AUTO_CREATE_USER',
+                            'NO_ENGINE_SUBSTITUTION'
+                        ],
             'engine' => null,
         ],
 

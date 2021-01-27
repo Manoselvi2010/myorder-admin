@@ -3,6 +3,7 @@
 @section('content')
 <section class="content">
 	<header class="content__title"><h1>Users</h1></header>
+  	@include('errors.success')  
 	<div class="card">
 		<div class="card-body">
 		    <form action="{{ url('/admin/users/search') }}" method="GET" autocomplete="off">
@@ -92,9 +93,13 @@
 									</td>
 									<td>
 										<a class="btn btn-success btn-xs" href="{{ route('users.edit',Crypt::encrypt($user->id)) }}"><i class="zmdi zmdi-edit"></i> View </a>
+										<a href="{{route('mails.show',$user->id)}}" class="btn btn-icon btn-warning" style="color: #fff">
+                                            <i class="zmdi zmdi-email"></i>
+                                        </a>
 									</td>
-									<!-- 	<td><a class="btn btn-success btn-xs" href="{{ url('/admin/user_excel/'.Crypt::encrypt($user->id)) }}"><i class="zmdi zmdi-download zmdi-hc-fw"></i> Export </a>
-									</td> -->
+									<td>
+										<a class="btn btn-success btn-xs" href="{{ route('excel.show',Crypt::encrypt($user->id)) }}"><i class="zmdi zmdi-download zmdi-hc-fw"></i> Export </a>
+									</td>
 								</tr>
 							@endforeach
 						@else

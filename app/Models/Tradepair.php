@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Tradepair extends Model
 {
+    protected $connection = 'mysql2';
     protected $table = 'tradepairs';
 
     public static function index($pair, $pair2)

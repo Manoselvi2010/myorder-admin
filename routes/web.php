@@ -43,6 +43,13 @@ Route::group([ 'middleware' => ['admin'], 'prefix'=>'admin', 'namespace' =>'Admi
 	Route::group(['prefix'=>'users'], function(){	
 		Route::get('/', 'UserController@index')->name('users.index');
 		Route::get('/edit/{id}', 'UserController@edit')->name('users.edit');
+		//mail send
+		Route::get('/show/{id}', 'MailController@show')->name('mails.show');
+		Route::post('single_mail_submit', 'MailController@single_mail_submit')->name('mails.single_mail_submit');
+		//Export Excell
+		Route::get('excel/{id}', 'ExportexcelController@show')->name('excel.show');
+		Route::get('export_excel', 'ExportexcelController@export_excel');
+		Route::get('induvidual-export-excel/{id}/{type}', 'ExportexcelController@induvidual_export_excel')->name('excel.export');
 	});
 	Route::post('update_user', 'UserController@update');
 	Route::get('users_wallet/{id}', 'UserController@userWallet');
@@ -50,7 +57,10 @@ Route::group([ 'middleware' => ['admin'], 'prefix'=>'admin', 'namespace' =>'Admi
 	Route::get('users/search', 'UserController@userSearchList');
 	Route::post('users/search', 'UserController@userSearchList');
 	Route::post('user_status', 'UserController@userStatus');
-	Route::get('user_excel/{id}', 'UserController@excel_view');
+
+
+
+
 	Route::get('deactive_users', 'UserController@deactiveUser');
 	Route::get('today_users', 'UserController@todayUser');
 	Route::get('kyc_request_users', 'UserController@kyc_RequestUser');
@@ -94,7 +104,7 @@ Route::group([ 'middleware' => ['admin'], 'prefix'=>'admin', 'namespace' =>'Admi
 	// Route::post('commissionupdate', 'CommissionController@commissionUpdate');
 	Route::group(['prefix'=>'commission-settings'], function(){
 		Route::get('/', 'CommissionController@index')->name('commission_settings.index'); 
-		Route::get('/add', 'CommissionController@add')->name('commission_settings.add');
+		Route::get('/create', 'CommissionController@create')->name('commission_settings.create');
 		Route::post('/', 'CommissionController@store')->name('commission_settings.store');
 		Route::get('{id}/edit', 'CommissionController@edit')->name('commission_settings.edit');
 		Route::post('/update', 'CommissionController@update')->name('commission_settings.update');
@@ -191,9 +201,7 @@ Route::group([ 'middleware' => ['admin'], 'prefix'=>'admin', 'namespace' =>'Admi
 	Route::get('addsubadmin', 'SubadminController@addsubadmin');
 	Route::post('subadmin_save', 'SubadminController@subadmin_save');
 	Route::get('subadmin_delete/{id}', 'SubadminController@subadminDelete');	
-	//Export Excell
-	Route::get('/users/exportExcel', 'UserController@exportExcel');
-	Route::get('/users/induvidual_exportExcel/{id}/{type}', 'UserController@exportIndividualUserXls');
+	
 	//get individual user deposit amount details
 	Route::get('/users/userdepositamt', 'UserController@userDepostAmount');	
 	Route::group(['prefix'=>'under-maintenance'], function(){
@@ -217,4 +225,5 @@ Route::group([ 'middleware' => ['admin'], 'prefix'=>'admin', 'namespace' =>'Admi
 		Route::post('change-password', 'SecuritysettingController@change_password')->name('security_settings.change_password');
 	});
 	// Security Settings end
+	Route::get('market', 'MarketController@index')->name('market.index');
 });

@@ -18,8 +18,17 @@ class CommissionController extends Controller
     {    	
     	$commissions = Commission::index(); 
     	return view('commission_settings.index',[
-                                    			'commissions' => $commissions, 
-                                    		]);
+                                        			'commissions' => $commissions, 
+                                        		]);
+    }
+    public function create()
+    {
+        return view('commission_settings.create');
+    }
+    public function store(Request $request)
+    { 
+        $commission = Commission::save_commission($request);
+        return redirect()->route('commission_settings.index')->with('success','Added Successfully');
     }
     public function edit($id)
     {
@@ -32,7 +41,7 @@ class CommissionController extends Controller
         }
         return view('commission_settings.edit')->with('commission',$commission)->with('digit',$digit);
     }
-    public function commissionUpdate(CommissionRequest $request)
+    public function update(CommissionRequest $request)
     { 
         $commission = Commission::commissionUpdate($request);
 
